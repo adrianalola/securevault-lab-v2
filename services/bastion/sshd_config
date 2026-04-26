@@ -1,0 +1,21 @@
+# Puerto estándar dentro del contenedor
+Port 22
+
+# Solo clave pública — nunca contraseña
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+
+# Sin root
+PermitRootLogin no
+
+# Sin forwarding innecesario
+X11Forwarding no
+AllowAgentForwarding no
+
+# Solo el usuario del bastión
+AllowUsers bastionuser
+
+# Cierra conexiones idle después de 5 minutos
+ClientAliveInterval 300
+ClientAliveCountMax 2

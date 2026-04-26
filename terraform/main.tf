@@ -43,3 +43,38 @@ resource "docker_network" "private" {
     gateway = "10.0.3.1"
   }
 }
+
+# ── Imagen del bastión ────────────────────────────────────
+resource "docker_image" "bastion" {
+  name = "securevault-bastion:latest"
+  build {
+    context = "../services/bastion"
+  }
+}
+
+# ── Contenedor bastión ────────────────────────────────────
+resource "docker_container" "bastion" {
+  name  = "securevault_bastion"
+  image = docker_image.bastion.image_id
+
+  # Expone SSH al host en puerto 2222
+  ports {
+    internal = 22
+    external = 2222
+  }
+
+  # Una pata en pública, otra en privada
+  networks_advanced {
+    name = docker_network.public.name
+  }
+
+  networks_advanced {
+    name = docker_network.dmz.name
+  }
+
+  networks_advanced {
+    name = docker_network.private.name
+  }
+
+  restart = "unless-stopped"
+}
