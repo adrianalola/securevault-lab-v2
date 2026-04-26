@@ -78,3 +78,69 @@ resource "docker_container" "bastion" {
 
   restart = "unless-stopped"
 }
+
+# ── Base de datos PostgreSQL ──────────────────────────────
+resource "docker_image" "postgres" {
+  name = "postgres:15-alpine"
+}
+
+resource "docker_container" "db" {
+  name  = "securevault_db"
+  image = docker_image.postgres.image_id
+
+  env = [
+    "POSTGRES_DB=securevault",
+    "POSTGRES_USER=vaultuser",
+    "POSTGRES_PASSWORD=vaultpass"
+  ]
+
+  # Solo en red privada — sin puertos expuestos al host
+  networks_advanced {
+    name = docker_network.private.name
+  }
+
+  volumes {
+    host_path      = abspath("../services/db/init.sql")
+    container_path = "/docker-entrypoint-initdb.d/init.sql"
+  }
+
+  restart = "unless-stopped"
+}
+
+# ── API Service ───────────────────────────────────────────
+resource "docker_image" "api" {
+  name = "securevault-api:latest"
+  build {
+    context = "../services/api"
+  }
+}
+
+resource "docker_container" "api" {
+  name  = "securevault_api"
+  image = docker_image.api.image_id
+
+  env = [
+    "DB_HOST=securevault_db",
+    "DB_NAME=securevault",
+    "DB_USER=vaultuser",
+    "DB_PASS=vaultpass"
+  ]
+
+  # Solo en red privada — sin puertos expuestos al host
+  networks_advanced {
+    name = docker_network.private.name
+  }
+
+  networks_advanced {
+    name = docker_network.dmz.name
+  }
+
+  # Monta los certificados
+  volumes {
+    host_path      = abspath("../certs")
+    container_path = "/certs"
+    read_only      = true
+  }
+
+  restart = "unless-stopped"
+}
