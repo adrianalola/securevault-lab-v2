@@ -1,0 +1,13 @@
+# Terraform state (contiene IPs, IDs, secretos)
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+
+# Certificados (nunca al repo)
+certs/
+
+# Python
+__pycache__/
+*.pyc
+.env
