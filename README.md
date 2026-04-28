@@ -1,20 +1,20 @@
 # SecureVault Lab
 
-A hands-on Cloud Security lab demonstrating defense-in-depth principles using Docker, Terraform, and Python — with an equivalent Azure architecture in code.
+A hands-on Cloud Security lab demonstrating defense in depth principles using Docker, Terraform, and Python with an equivalent Azure architecture in code.
 
 ## Security Concepts Demonstrated
 
 | Concept | Implementation |
 |---|---|
 | Network segmentation | Three isolated Docker networks (public / DMZ / private) |
-| Zero trust access | No direct access to private zone — everything through bastion |
-| SSH hardening | Key-only auth, no root, no password, ED25519 |
-| PKI and certificates | Self-signed CA, server and client certs with OpenSSL |
+| Zero trust access | No direct access to private zone everything through bastion |
+| SSH hardening | Key only auth, no root, no password, ED25519 |
+| PKI and certificates | Self signed CA, server and client certs with OpenSSL |
 | Mutual TLS (mTLS) | FastAPI rejects any request without valid client certificate |
 | SSH tunneling | Port forwarding through bastion to reach private API |
 | Packet capture | TShark capturing TLS 1.3 handshake and encrypted payloads |
 | Infrastructure as Code | Full environment provisioned with Terraform |
-| Least privilege | DB has no exposed ports — only reachable from private network |
+| Least privilege | DB has no exposed ports  only reachable from private network |
 
 ## Architecture
 
